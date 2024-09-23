@@ -30,16 +30,19 @@
 	
 	NotLeap:			#Denna subrutin hanterar läget då årtalet är jämnt delbart med 400 men också med 100
 		la $a0 notleap		#load prompt for not leap
+		subu $sp $sp 16		#adjusting stack pointer for print function
 		jal print		#call print.s
-		
-		li $v0 10		#laddar return 0
+		addu $sp $sp 16		#resetting stack pointer after print function
+		li $v0 10
 		syscall			#return 0
 
 	Leap:				#Denna subrutin hanterar läget då årtalet är jämnt delbart med 4
 		la $a0 leap		#laddar leap-labeln till a0
+		subu $sp $sp 16		#adjusting stack pointer for print function
 		jal print		#printa leap-label
+		addu $sp $sp 16		#resetting stack pointer after print function
 		
-		li $v0 10		#laddar return 0
+		li $v0 10
 		syscall			#return 0
 		
 		

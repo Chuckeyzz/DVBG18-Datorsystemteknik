@@ -39,8 +39,9 @@
 		la $a0 answer
 		move $a1 $t3
 		move $a2 $t2
+		subu $sp $sp 16		#adjusting stack pointer for print function
 		jal print
-		
+		addu $sp $sp 16		#resetting stack pointer after print function
 		li $v0 10
 		syscall
 				 
