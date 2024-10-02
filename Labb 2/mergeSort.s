@@ -1,4 +1,2 @@
-.data
-
-.text
-	mergeSort:
+	.globl mergeSort
+mergeSort:
