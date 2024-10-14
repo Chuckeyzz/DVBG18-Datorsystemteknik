@@ -1,33 +1,33 @@
 .globl printLoop
 .data    
-	Space: .asciiz " "
+	Space: .asciiz " %d"
 .text
 
 	printer: 
-
+		addi $sp $sp -28
 		sw $ra 0($sp)		
 		sw $a0 4 ($sp)			#saving myArray on the stack
 		sw $a1 8 ($sp)			#saving arraysize on the stack
+		sw $s0 12 ($sp)			#saving s-registers on the stack
+		sw $s1 16 ($sp)
+		sw $s2 20 ($sp)
 			
-		li $s0 0			#loop counter + 1 for off by one error
+		li $s0 0				#setting loop counter
 		lw $s1 8($sp)			#load the array size to $s1
-		la $t1 ($s1)
 		lw $s2 4($sp)			#load array to s2
 		
 
         
 	printLoop:
-		beq $t1 $s0 printFinished	#check if loop counter == array size
+		beq $s1 $s0 printFinished	#check if loop counter == array size
 
 		lw $t2 0($s2)			#load value at the position of array
-		move $a0 $t2  			#move the value from array position to $a0 for print
-
-		li $v0 1			#temp soloution until print.shit works
-		syscall
+		move $a1 $t2  
+		la $a0 Space			#move the value from array position to $a0 for print
 		
-		li $v0 4
-		la $a0 Space
-		syscall
+		addi $sp $sp -16
+		jal print
+		addi $sp $sp 16
 		
 		addi $s0 $s0 1			#increment loop counter
 		addi $s2 $s2 4			#increment array address by 4 bytes (1 word)
@@ -35,8 +35,13 @@
 		j printLoop			#jump back to the loop
         
 	printFinished: 
-		li $s0 0 			#reset loop counter
-		li $s1 0 			#resetting s-reg that held array size
+		
+				
 		lw $ra 0($sp)			#restore return address
-
+		lw $a0 4 ($sp)			#restoring a registers
+		lw $a1 8 ($sp)			
+		lw $s0 12 ($sp)			#restoring s registers
+		lw $s1 16 ($sp)
+		lw $s2 20 ($sp)			
+		addi $sp $sp 28			#resetting stack-pointer 
 		jr $ra				#jump to return address

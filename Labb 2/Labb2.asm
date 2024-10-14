@@ -9,10 +9,9 @@
 .text
 
 	main:
-		la $s0 0			#load loop counter
-		la $s1 arraySize
+
 		
-		addi $sp $sp -16		#adjusting stack pointer before jump 	
+		addi $sp $sp -16			#adjusting stack pointer before jump 	
 		la $a0 notSortedArr 		#printing message
 		
 		addi $sp $sp -16
@@ -20,7 +19,7 @@
 		addi $sp $sp 16
 		
 		la $a0 myArray			#loading array to a0
-		lw $a1 arraySize		#loading arraysizes value to a1
+		lw $a1 arraySize			#loading arraysizes value to a1
 		jal printer			#jump to printLoop
 		
 		addu $sp $sp 16			#resetting stackpointer after jump
