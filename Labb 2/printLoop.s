@@ -12,7 +12,7 @@
 		sw $s1 16 ($sp)
 		sw $s2 20 ($sp)
 			
-		li $s0 0				#setting loop counter
+		li $s0 0			#setting loop counter
 		lw $s1 8($sp)			#load the array size to $s1
 		lw $s2 4($sp)			#load array to s2
 		

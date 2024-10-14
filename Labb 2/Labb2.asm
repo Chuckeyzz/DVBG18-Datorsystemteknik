@@ -1,4 +1,3 @@
-
 .data
 	arraySize: .word 10
 	myArray: .word 4,5,2,2,1,6,7,9,5,10
@@ -10,8 +9,6 @@
 
 	main:
 
-		
-		addi $sp $sp -16			#adjusting stack pointer before jump 	
 		la $a0 notSortedArr 		#printing message
 		
 		addi $sp $sp -16
@@ -19,14 +16,15 @@
 		addi $sp $sp 16
 		
 		la $a0 myArray			#loading array to a0
-		lw $a1 arraySize			#loading arraysizes value to a1
+		lw $a1 arraySize		#loading arraysizes value to a1
 		jal printer			#jump to printLoop
 		
-		addu $sp $sp 16			#resetting stackpointer after jump
 		
-		#all of the above is for print array
+	#all of the above is for print array
 		
-		
+		la $a0 myArray			#loading array to a0
+		lw $a1 arraySize		#loading arraysizes value to a1
+		jal mergeSort			#jump to mergesort
 		
 		
 		
@@ -38,7 +36,7 @@
 		
 	
 	
-	#.include "mergeSort.s"	
+	.include "mergeSort.s"	
 	.include "print.s"
 	.include "printLoop.s"
 	#.include "merge.s"
