@@ -4,8 +4,8 @@
 .text
 
 	printer: 
-		addi $sp $sp -28
-		sw $ra 0($sp)		
+		addi $sp $sp -28		#gave the stack some extra room to handle jal print
+		sw $ra 0($sp)			#saving return address
 		sw $a0 4 ($sp)			#saving myArray on the stack
 		sw $a1 8 ($sp)			#saving arraysize on the stack
 		sw $s0 12 ($sp)			#saving s-registers on the stack
@@ -24,11 +24,9 @@
 		lw $t2 0($s2)			#load value at the position of array
 		move $a1 $t2  
 		la $a0 Space			#move the value from array position to $a0 for print
-		
 		addi $sp $sp -16
 		jal print
 		addi $sp $sp 16
-		
 		addi $s0 $s0 1			#increment loop counter
 		addi $s2 $s2 4			#increment array address by 4 bytes (1 word)
 		
@@ -44,4 +42,4 @@
 		lw $s1 16 ($sp)
 		lw $s2 20 ($sp)			
 		addi $sp $sp 28			#resetting stack-pointer 
-		jr $ra				#jump to return address
+		jr $ra				#jump to return address 

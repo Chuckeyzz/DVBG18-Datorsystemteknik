@@ -25,18 +25,19 @@
 		la $a0 myArray			#loading array to a0
 		lw $a1 arraySize		#loading arraysizes value to a1
 		jal mergeSort			#jump to mergesort
+			
 		
-		
+		move $a0 $s0
+		lw $a1 arraySize		#loading arraysizes value to a1
+		jal printer			#jump to printLoop
 		
 		li $v0 10 
 		syscall
-		#la $a0 myArray
-		#jal mergeSort
-		
+	
 		
 	
 	
 	.include "mergeSort.s"	
 	.include "print.s"
 	.include "printLoop.s"
-	#.include "merge.s"
+	.include "merge.s"
