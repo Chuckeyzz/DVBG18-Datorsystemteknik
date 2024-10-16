@@ -1,80 +1,75 @@
-	.globl mergeSort
-	
-.data
-	test: .asciiz "\nit works!!\n"
-	ERROR: .asciiz "\nERROR RETURN NOT WORKING\n"
-	arrayMsg: .asciiz "\nArray state: "
+    .globl mergeSort
 
 .text
-	mergeSort:
+mergeSort:
+    # Initialize variables
+    li $s3, 1              # Setting comparer (1)
+    move $s1, $a0          # Load base address of the array from $a0
+    move $s2, $a1          # Load array size from $a1
+    move $s4, $a1          # Save original array size for later use
 
-		li $s3 1			#setting comparer	
-		move $s1 $a0 			#loading myArray from a0
-		move $s2 $a1			#load array size 
-		move $s4 $a1			#saving original array size for later use
-		
-		
-				# Print array state before recursion
-		la $a0, arrayMsg
-		jal print
-		move $a0, $s1			      # load base address of the array
-		move $a1, $s2			      # load size of the array
-		jal printer			      # print array
-			
-		ble $s2 $s3 return		#if (size <= 1 ){} BASE CASE
-		
-		addi $sp $sp -32
-		sw $ra 0 ($sp)			#saving return address on the stack
-		sw $s0 12 ($sp)			#saving s-registers on the stack
-		sw $s1 16 ($sp)			#s1 = myArray
-		sw $s2 20 ($sp)			#s2 = arraySize
-		sw $s3 24 ($sp)			#comparer
-		sw $s4 28 ($sp)			#original size
+    # Base case: if size <= 1, return
+    ble $s2, $s3, base_case_return
 
-		
-		# s1 contains address for myArray
-		# s2 contains value for arraySize 
-		# s4 contains original arraySize NOT FOR USE IN RECURSION
-	
-			#leftside merge	
-		divu $s2 $s2 2			#int half =  size / 2
-		la $a0 ($s1) 			#loading array address as inparameter
-		move $a1 $s2			#loading new size as inparameter			
-		jal mergeSort			#repeat mergeSort
-		
-			#mergeSortRight
-		addu $s1, $s1, $s2		#move array pointer to the middle (right half)
-		subu $a1, $s4, $s2		#calculate size for the right half (size = original size - half)
-		jal mergeSort			#recursive call for the right half
+    # Stack management for recursive calls
+    addi $sp, $sp, -32
+    sw $ra, 0($sp)         # Save return address
+    sw $s0, 12($sp)        # Save $s0
+    sw $s1, 16($sp)        # Save $s1 (array pointer)
+    sw $s2, 20($sp)        # Save $s2 (array size)
+    sw $s3, 24($sp)        # Save $s3 (comparer)
+    sw $s4, 28($sp)        # Save $s4 (original size)
 
-		subu $s1 $s1 $s2
-		move $a0 $s1			#handing address for base array to merge	
-		move $a1 $s4 			#handing original arraysize to merge
-		
-		jal merge
-		
-	return:
-		lw $ra, 0($sp)              	#restore return address
-		lw $s0, 12($sp)			#restore $s0
-		lw $s1, 16($sp)			#restore $s1
-		lw $s2, 20($sp)			#restore $s2
-		lw $s3, 24($sp)			#restore $s3
-		lw $s4, 28($sp)			#restore $s4 (original size)
-		addi $sp, $sp, 32		#move stack pointer back
+    # Recursive call for the left half
+    divu $s0, $s2, 2       # Calculate half = size / 2 (left half)
+    move $a0, $s1          # Load base address of the left half
+    move $a1, $s0          # Load new size for the left half (half size)
+    
+    # Ensure $a0 is word-aligned
+    andi $t0, $a0, 3       # Check if the last 2 bits of $a0 are 0
+    beqz $t0, aligned_left # If aligned, proceed
+    # If not aligned, adjust $a0
+    addi $a0, $a0, 3
+    andi $a0, $a0, 0xFFFFFFFC
 
+aligned_left:
+    jal mergeSort          # Recursive call for the left half
 
-		la $a0, arrayMsg
-		addi $sp $sp -16
-		jal print
-		addi $sp $sp 16
-		
-		move $a0, $s1			      # load base address of the array
-		move $a1, $s4			      # load original size of the array
-		jal printer			      # print array
-		
+    # Prepare for the right half
+    lw $s2, 20($sp)        # Restore the original size of the array
+    lw $s4, 28($sp)        # Restore the original total size
 
-		
-		lw $ra 0($sp)			#restore the return address once again
-			#the return address here gets an offset of +1c... WHY????
-		jr $ra				#return to caller
-		
+    addu $s1, $s1, $s0     # Move array pointer to the middle (right half)
+    subu $a1, $s4, $s0     # Calculate size for the right half (total size - left size)
+
+    # Ensure $s1 (right half pointer) is word-aligned
+    andi $t0, $s1, 3       # Check if the last 2 bits of $s1 are 0
+    beqz $t0, aligned_right # If aligned, proceed
+    # If not aligned, adjust $s1
+    addi $s1, $s1, 3
+    andi $s1, $s1, 0xFFFFFFFC
+
+aligned_right:
+    move $a0, $s1          # Load base address of the right half
+    jal mergeSort          # Recursive call for the right half
+
+    # After recursion: Restore array pointer and prepare to call merge
+    lw $s1, 16($sp)        # Restore original base address
+    lw $s4, 28($sp)        # Restore original size for merging
+
+    # Call merge function
+    move $a0, $s1          # Pass base address of the array to merge
+    move $a1, $s4          # Pass original array size to merge
+    jal merge              # Call the merge function
+
+base_case_return:
+    # Stack and register restoration
+    lw $ra, 0($sp)         # Restore return address
+    lw $s0, 12($sp)        # Restore $s0
+    lw $s1, 16($sp)        # Restore $s1
+    lw $s2, 20($sp)        # Restore $s2
+    lw $s3, 24($sp)        # Restore $s3
+    lw $s4, 28($sp)        # Restore $s4
+    addi $sp, $sp, 32      # Reset stack pointer
+
+    jr $ra                 # Return to caller

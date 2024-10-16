@@ -4,7 +4,7 @@
 .text
 
 	printer: 
-		addi $sp $sp -28		#gave the stack some extra room to handle jal print
+		addi $sp $sp -40		#gave the stack some extra room to handle jal print
 		sw $ra 0($sp)			#saving return address
 		sw $a0 4 ($sp)			#saving myArray on the stack
 		sw $a1 8 ($sp)			#saving arraysize on the stack
@@ -33,7 +33,6 @@
 		j printLoop			#jump back to the loop
         
 	printFinished: 
-		
 				
 		lw $ra 0($sp)			#restore return address
 		lw $a0 4 ($sp)			#restoring a registers
@@ -41,5 +40,5 @@
 		lw $s0 12 ($sp)			#restoring s registers
 		lw $s1 16 ($sp)
 		lw $s2 20 ($sp)			
-		addi $sp $sp 28			#resetting stack-pointer 
+		addi $sp $sp 40			#resetting stack-pointer 
 		jr $ra				#jump to return address 
