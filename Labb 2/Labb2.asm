@@ -1,6 +1,6 @@
 .data
-	arraySize: .word 10
-	myArray: .word 4,5,2,2,1,6,7,9,5,10
+	arraySize: .word 10#15
+	myArray: .word 4,5,2,2,1,6,7,9,5,10#,-159,-22,-15,-25,10000
 	mid: .word 0
 	sortedArr: .asciiz "\nThe sorted array is :"
 	notSortedArr: .asciiz "\nThe unsorted array is : "
